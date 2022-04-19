@@ -1,28 +1,77 @@
+#include <unistd.h>
+#include <stdarg.h>
 #include "main.h"
 /**
- * _printf - prints according to format
- * @format: The given format
+ * _putchar - writes the character c to stdout
+ * @c: The character to print
  *
  * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
+*/
+
+int _putchar(char c)
+{
+ return (write(1, &c, 1));
+}
+
+/**
+ * print_string - prints an array of string characters
+ * @str: the variable to print
+ *
+ */
+
+int print_string(char *str)
+{
+ int i = 0;
+
+ while (str[i] != '\0')
+ {
+  _putchar(str[i]);
+  i++;
+ }
+ return (i);
+}
+
+/**
+ * _printf - Produces output according to a format
+ * @format: The format of the string.
+ * Return: The number of characters printed
  */
 int _printf(const char *format, ...)
 {
-	va_list list;
-	int i = 0, length = 0;
+ va_list ap;
+ unsigned int j = 0, n = 0;
 
-	if (format == NULL || (format[0] == '%' && !format[1]))
-		return (-1);
-	va_start(list, format);
-		for (i = 0; format[i]; i++)
-		{
-			if (format[i] == '%')
-			{
-				length += get_print_func(format[i + 1], list);
-				i++;
-			}
-			else
-				length += _putchar(format[i]);
-		}
-	va_end(list);
-	return (length);
+ va_start(ap, format);
+ while (format[j] != '\0')
+ {
+  if (format[j] == '%')
+  {
+   switch (format[j + 1])
+   {
+    case 'c':
+     _putchar(va_arg(ap, int));
+     n++;
+     break;
+    case 's':
+     n += print_string(va_arg(ap, char *));
+
+     break;
+    case '%':
+     _putchar('%');
+     n++;
+     break;
+   }
+
+   j++;
+  }
+  else
+  {
+   _putchar(format[j]);
+   n++;
+  }
+  j++;
+ }
+ va_end(ap);
+ return (n);
 }
